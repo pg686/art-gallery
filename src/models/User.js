@@ -12,7 +12,11 @@ const userSchema = new mongoose.Schema({
     },
     address: {
         type: String
-    }
+    },
+    publications: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Publication' 
+    }]
 });
 userSchema.pre('save', function(next){
     bcrypt.hash(this.password, SALT_ROUNDS).then((hashedPassword) => {
