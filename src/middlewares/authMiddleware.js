@@ -7,9 +7,9 @@ const token = req?.cookies?.[COOKIE_SESSION_NAME];
 if(token){
 jwt.verify(token, SECRET, ((err, decodedToken) => {
     if(err){
-      res.clearCookie(COOKIE_SESSION_NAME);
-        return next(err);
-
+        console.log(err, "err")
+       res.clearCookie(COOKIE_SESSION_NAME);
+       res.redirect('/login');
     }
     req.user = decodedToken;
     res.locals.user = decodedToken;

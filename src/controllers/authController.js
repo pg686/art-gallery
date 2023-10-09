@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const authService = require('../services/authService.js');
 const {COOKIE_SESSION_NAME} =require('../config/constants.js')
+const {getErrorMessage} = require('../utils/errorMapper.js');
 const {isAuth, isGuest} = require('../middlewares/authMiddleware.js')
 router.get('/login', isGuest, (req, res) => {
 
@@ -16,12 +17,11 @@ const {password, username } = req.body;
 try{
     const user = await authService.login(username, password);
     const token = await authService.createToken(user);
-res.cookie(COOKIE_SESSION_NAME, token);
-    console.log(token, "token");
+    res.cookie(COOKIE_SESSION_NAME, token);
     res.redirect('/')
 }
 catch(err){
-    console.log(err)
+    return  res.render('auth/login', {error: getErrorMessage(err)})
 }
 
 
@@ -33,12 +33,12 @@ if(password !== repeatPassword){
 }
 try{
 const user = await authService.register({password, ...userData});
-const token = authService.createToken(user);
+const token = await authService.createToken(user);
 res.cookie(COOKIE_SESSION_NAME, token);
 res.redirect('/')
 }
 catch(error){
-    return  res.render('auth/register', {error: 'Db error'})
+    return  res.render('auth/register', {error: getErrorMessage(error)})
 }
 })
 
